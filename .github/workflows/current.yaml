@@ -26,6 +26,7 @@ jobs:
         uses: astral-sh/setup-uv@v6
       - name: Set up Charmcraft
         run: |
+          sudo apt-get update
           cd charmcraft
           make setup
       - name: Generate charms
