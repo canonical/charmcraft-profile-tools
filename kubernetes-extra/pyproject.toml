@@ -11,7 +11,7 @@ requires-python = ">=3.10"
 # dependencies of any charmlibs that the charm uses (copy the dependencies from PYDEPS).
 dependencies = [
     "ops>=3,<4",
-    "requests>=2.32.5",
+    "requests==2.32.5",
 ]
 
 [dependency-groups]
