@@ -33,4 +33,4 @@ jobs:
         run: |
           cd initial-charms
           CHARMCRAFT_DIR=../charmcraft uvx --from rust-just just init
-          git diff --exit-code
+          uvx --from rust-just just diff  # Detect new/modified/deleted files.
