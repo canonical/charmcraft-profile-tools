@@ -26,9 +26,8 @@ jobs:
           uvx --from rust-just just kubernetes-extra
           # Check that the implemented charm matches the one stored in the repo.
           # We don't care about differences in versions of transitive deps.
-          git update-index --assume-unchanged kubernetes-extra/uv.lock
           git add --all
-          git diff --exit-code HEAD
+          git diff --exit-code HEAD -- . ':(exclude)kubernetes-extra/uv.lock'
       - name: Check kubernetes-extra
         run: |
           cd kubernetes-extra
