@@ -75,11 +75,11 @@ _tox charm envs:
 [doc("Detect new/modified/deleted files, for use in CI")]
 diff:
     #!/bin/sh
-    changes="$(git status --porcelain)"
+    changes="Changes:\n$(git status --porcelain)"
     # Exclude particular changes
     changes="$(echo "$changes" | grep -vF ' M kubernetes-extra/uv.lock')"
     # If there are changes, exit with an error
-    if [ "$(echo "$changes" | wc -l)" -gt 0 ]; then
+    if [ "$(echo "$changes" | wc -l)" -gt 1 ]; then
         echo "$changes"
         exit 1
     fi
