@@ -71,15 +71,3 @@ _tox charm envs:
         echo "{{BOLD}}tox -e {{envs}}{{NORMAL}}"
         tox -e {{envs}}
     fi
-
-[doc("Detect new/modified/deleted files, for use in CI")]
-diff:
-    #!/bin/sh
-    changes="$(git status --porcelain)"
-    # Exclude particular changes
-    changes="$(echo "$changes" | grep -vF ' M kubernetes-extra/uv.lock')"
-    if [ -n "$changes" ]; then
-        echo 'Changes detected:'
-        echo "$changes"
-        exit 1
-    fi
