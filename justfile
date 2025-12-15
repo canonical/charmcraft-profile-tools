@@ -76,9 +76,9 @@ _tox charm envs:
 diff:
     #!/bin/sh
     changes="Changes:\n$(git status --porcelain)"
-    # Exclude particular changes
+    # Exclude particular changes.
     changes="$(echo "$changes" | grep -vF ' M kubernetes-extra/uv.lock')"
-    # If there are changes, exit with an error
+    # If there are changes, exit with an error.
     if [ "$(echo "$changes" | wc -l)" -gt 1 ]; then
         echo "$changes"
         exit 1
