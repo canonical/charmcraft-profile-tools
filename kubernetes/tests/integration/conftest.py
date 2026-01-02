@@ -1,4 +1,4 @@
-# Copyright 2025 Charmer
+# Copyright 2026 Charmer
 # See LICENSE file for licensing details.
 #
 # The integration tests use the Jubilant library. See https://documentation.ubuntu.com/jubilant/
