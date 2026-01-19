@@ -11,12 +11,15 @@ from charm import SERVICE_NAME, MyApplicationCharm
 
 CHECK_NAME = "service-ready"  # Name of Pebble check in the mock workload container.
 
-layer = ops.pebble.Layer(
+# A mock Pebble layer - useful for testing how the charm reacts to different states of the
+# workload container. The charm's reaction shouldn't depend on how the service is started or
+# checked, so the layer doesn't need the real command or check URL.
+MOCK_LAYER = ops.pebble.Layer(
     {
         "services": {
             SERVICE_NAME: {
                 "override": "replace",
-                "command": "/bin/foo",  # The specific command isn't important for unit tests.
+                "command": "mock-command",
                 "startup": "enabled",
             }
         },
@@ -27,7 +30,7 @@ layer = ops.pebble.Layer(
                 "threshold": 3,
                 "startup": "enabled",
                 "http": {
-                    "url": "http://localhost:8000/version",  # The specific URL isn't important.
+                    "url": "http://localhost:1234/mock-endpoint",
                 },
             }
         },
@@ -52,7 +55,7 @@ def test_pebble_ready(monkeypatch: pytest.MonkeyPatch):
     container_in = testing.Container(
         "some-container",
         can_connect=True,
-        layers={"base": layer},
+        layers={"base": MOCK_LAYER},
         service_statuses={SERVICE_NAME: ops.pebble.ServiceStatus.INACTIVE},
         check_infos={check_in},
     )
@@ -81,7 +84,7 @@ def test_pebble_ready_service_not_ready():
     container_in = testing.Container(
         "some-container",
         can_connect=True,
-        layers={"base": layer},
+        layers={"base": MOCK_LAYER},
         service_statuses={SERVICE_NAME: ops.pebble.ServiceStatus.INACTIVE},
         check_infos={check_in},
     )
