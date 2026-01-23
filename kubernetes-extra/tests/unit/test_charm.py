@@ -11,9 +11,9 @@ from charm import SERVICE_NAME, MyApplicationCharm
 
 CHECK_NAME = "service-ready"  # Name of Pebble check in the mock workload container.
 
-# A mock Pebble layer - useful for testing how the charm reacts to different states of the
-# workload container. The charm's reaction shouldn't depend on how the service is started or
-# checked, so the layer doesn't need the real command or check URL.
+# A minimal Pebble layer for our testing.Container objects.
+# Our charm doesn't retrieve the service command or the check URL
+# from Pebble, so this layer doesn't need a real command or URL.
 MOCK_LAYER = ops.pebble.Layer(
     {
         "services": {
