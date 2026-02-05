@@ -1,8 +1,8 @@
-name: Current with Charmcraft
+name: Current with Charmcraft main
 
 on:
   schedule:
-    - cron: "50 22 * * *"
+    - cron: "50 22 * * 0"
   push:
     branches:
       - main
