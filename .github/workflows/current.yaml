@@ -3,6 +3,12 @@ name: Current with Charmcraft main
 on:
   schedule:
     - cron: "50 22 * * 0"
+  pull_request:
+    paths:
+      - kubernetes/**
+      - machine/**
+    types:
+      - ready_for_review
   push:
     branches:
       - main
