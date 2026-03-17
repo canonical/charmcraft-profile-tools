@@ -20,11 +20,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout this repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           path: initial-charms
       - name: Checkout Charmcraft
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: canonical/charmcraft
           path: charmcraft
