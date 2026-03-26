@@ -14,7 +14,7 @@ requires-python = ">=3.10"
 # then inspect the libraries for dependencies specified in PYDEPS. List those dependencies here.
 dependencies = [
     "ops>=3,<4",
-    "requests==2.32.5",
+    "requests==2.33.0",
 ]
 
 [dependency-groups]
