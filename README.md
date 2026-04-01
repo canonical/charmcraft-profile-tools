@@ -72,12 +72,11 @@ tox -e integration
 
 If you change the dependencies of the Charmcraft profiles, you'll need to update `uv.lock.j2` for each profile.
 
-
 Make sure you've initialized a Kubernetes charm and a machine charm (see [Generate charms for testing](#generate-charms-for-testing)). Then run `just lock`. This locks the dependencies of each charm and generates template files:
 
 - `.templates/init-kubernetes/uv.lock.j2`
 - `.templates/init-machine/uv.lock.j2`
 
-You can copy these files to the Charmcraft source.
+You can copy these files to the Charmcraft source. Alternatively, run `CHARMCRAFT_DIR=~/charmcraft just lock` to generate the `uv.lock.j2` files and copy them to the Charmcraft source.
 
 If you only want one of the files, use `just lock-kubernetes` or `just lock-machine` instead of `just lock`.

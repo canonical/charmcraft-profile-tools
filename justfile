@@ -22,18 +22,28 @@ lock: lock-kubernetes lock-machine
 [doc("Generate a uv.lock template for the K8s charm")]
 [working-directory: "kubernetes"]
 lock-kubernetes:
-    @echo "{{BOLD}}Generating .templates/init-kubernetes/uv.lock.j2{{NORMAL}}"
+    #!/bin/sh
+    echo "{{BOLD}}Generating .templates/init-kubernetes/uv.lock.j2{{NORMAL}}"
     uv lock
-    @mkdir -p "../.templates/init-kubernetes"
-    @sed 's/my-application/{{{{ name }}/g' uv.lock > "../.templates/init-kubernetes/uv.lock.j2"
+    mkdir -p "../.templates/init-kubernetes"
+    sed 's/my-application/{{{{ name }}/g' uv.lock > "../.templates/init-kubernetes/uv.lock.j2"
+    if [ -n "$CHARMCRAFT_DIR" ]; then
+        echo "{{BOLD}}Copying .templates/init-kubernetes/uv.lock.j2{{NORMAL}} to the Charmcraft source"
+        cp "../.templates/init-kubernetes/uv.lock.j2" "$CHARMCRAFT_DIR/charmcraft/templates/init-kubernetes"
+    fi
 
 [doc("Generate a uv.lock template for the machine charm")]
 [working-directory: "machine"]
 lock-machine:
-    @echo "{{BOLD}}Generating .templates/init-machine/uv.lock.j2{{NORMAL}}"
+    #!/bin/sh
+    echo "{{BOLD}}Generating .templates/init-machine/uv.lock.j2{{NORMAL}}"
     uv lock
-    @mkdir -p "../.templates/init-machine"
-    @sed 's/my-application/{{{{ name }}/g' uv.lock > "../.templates/init-machine/uv.lock.j2"
+    mkdir -p "../.templates/init-machine"
+    sed 's/my-application/{{{{ name }}/g' uv.lock > "../.templates/init-machine/uv.lock.j2"
+    if [ -n "$CHARMCRAFT_DIR" ]; then
+        echo "{{BOLD}}Copying .templates/init-machine/uv.lock.j2{{NORMAL}} to the Charmcraft source"
+        cp "../.templates/init-machine/uv.lock.j2" "$CHARMCRAFT_DIR/charmcraft/templates/init-machine"
+    fi
 
 _charmcraft-init +profiles:
     #!/bin/sh
@@ -43,7 +53,7 @@ _charmcraft-init +profiles:
     fi
     if [ ! -d "$CHARMCRAFT_DIR/.venv" ]; then
         echo "Environment does not exist: $CHARMCRAFT_DIR/.venv"
-        echo "Have you run 'make setup' in the Charmcraft directory?"
+        echo "Have you run 'make setup' in the Charmcraft source?"
         exit 1
     fi
     echo "{{BOLD}}Activating environment: $CHARMCRAFT_DIR/.venv"
