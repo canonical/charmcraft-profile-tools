@@ -24,7 +24,6 @@ lock: lock-kubernetes lock-machine
 lock-kubernetes:
     #!/bin/sh
     echo "{{BOLD}}Generating .templates/init-kubernetes/uv.lock.j2{{NORMAL}}"
-    uv lock
     mkdir -p "../.templates/init-kubernetes"
     sed 's/my-application/{{{{ name }}/g' uv.lock > "../.templates/init-kubernetes/uv.lock.j2"
     if [ -n "$CHARMCRAFT_DIR" ]; then
@@ -37,7 +36,6 @@ lock-kubernetes:
 lock-machine:
     #!/bin/sh
     echo "{{BOLD}}Generating .templates/init-machine/uv.lock.j2{{NORMAL}}"
-    uv lock
     mkdir -p "../.templates/init-machine"
     sed 's/my-application/{{{{ name }}/g' uv.lock > "../.templates/init-machine/uv.lock.j2"
     if [ -n "$CHARMCRAFT_DIR" ]; then
@@ -63,6 +61,7 @@ _charmcraft-init +profiles:
         rm -rf $profile
         echo "{{BOLD}}CHARMCRAFT_DEVELOPER=1 charmcraft init --profile $profile --project-dir $profile --name my-application --author Charmer{{NORMAL}}"
         CHARMCRAFT_DEVELOPER=1 charmcraft init --profile $profile --project-dir $profile --name my-application --author Charmer
+        uv lock --project $profile
     done
     echo "{{BOLD}}Deactivating Charmcraft environment"
     deactivate

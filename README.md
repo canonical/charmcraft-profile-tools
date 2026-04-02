@@ -28,8 +28,9 @@ The Python script:
 
 1. Clones this repo into the Charmcraft source
 2. Initializes a Kubernetes charm and a machine charm
+3. Locks the dependencies of each charm
 3. Lints each charm and runs its unit tests
-4. Locks the dependencies of each charm and updates `uv.lock.j2`
+4. Updates the `uv.lock.j2` files
 
 If everything went well, commit your changes and open your PR 😌
 
@@ -47,7 +48,9 @@ After editing .j2 files in the Charmcraft source, run the following command in t
 CHARMCRAFT_DIR=~/charmcraft just init
 ```
 
-This initializes a Kubernetes charm in the `kubernetes` directory and a machine charm in the `machine` directory. If you only want one of the charms, use `just kubernetes` or `just machine` instead of `just init`.
+This initializes a Kubernetes charm in the `kubernetes` directory and a machine charm in the `machine` directory. This also locks the dependencies of each charm.
+
+If you only want one of the charms, use `just kubernetes` or `just machine` instead of `just init`.
 
 You can test the charms as normal using tox. Alternatively, initialize the charms and immediately test them:
 
@@ -96,7 +99,7 @@ tox -e integration
 
 If you change the dependencies of the Charmcraft profiles, you'll need to update `uv.lock.j2` for each profile.
 
-Make sure you've initialized a Kubernetes charm and a machine charm (see [Generate charms for testing](#generate-charms-for-testing)). Then run `just lock`. This locks the dependencies of each charm and generates template files:
+Make sure you've initialized a Kubernetes charm and a machine charm (see [Generate charms for testing](#generate-charms-for-testing)). Then run `just lock`. This generates template files:
 
 - `.templates/init-kubernetes/uv.lock.j2`
 - `.templates/init-machine/uv.lock.j2`
