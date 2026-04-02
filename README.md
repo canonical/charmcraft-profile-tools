@@ -39,7 +39,7 @@ You'll need:
 
 - The Charmcraft source. We'll assume this is located at `~/charmcraft`.
 - A virtual environment in the Charmcraft source. To create one, run `make setup` in the Charmcraft source.
-- [just](https://just.systems/man/en/), [uv](https://docs.astral.sh/uv/), and [tox](https://tox.wiki/en/). To install tox, run `uv tool install tox --with tox-uv`.
+- [uv](https://docs.astral.sh/uv/) and [just](https://just.systems/man/en/). If you don't want to install just, you can use `uvx --from rust-just just` instead.
 
 After editing .j2 files in the Charmcraft source, run the following command in this repo:
 

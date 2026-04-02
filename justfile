@@ -79,5 +79,5 @@ _tox charm envs:
         echo "{{BOLD}}Checking charm: {{charm}}{{NORMAL}}"
         cd "{{charm}}"
         echo "{{BOLD}}tox -e {{envs}}{{NORMAL}}"
-        tox -e {{envs}}
+        uvx --with tox-uv tox -e {{envs}}
     fi
