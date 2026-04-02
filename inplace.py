@@ -4,7 +4,7 @@ import os
 import pathlib
 import subprocess
 
-OUR_CLONE = pathlib.Path() / "charmcraft-profile-tools" / "canonical-match-profiles"
+OUR_CLONE = pathlib.Path.cwd() / "charmcraft-profile-tools/canonical-match-profiles"
 
 # Make sure we have a clone of the charmcraft-profile-tools repo, with a new branch checked out
 # in case we want to push the generated charms. Using https://github.com/dwilding/gimmegit.
