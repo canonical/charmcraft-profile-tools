@@ -4,10 +4,34 @@ In the Charmcraft source, profiles are stored as .j2 template files. For example
 
 **In this README**
 
+- [TL;DR: Update the profiles in a single shot](#tldr-update-the-profiles-in-a-single-shot)
 - [Generate charms for testing](#generate-charms-for-testing)
     - [Integration tests](#integration-tests)
     - [kubernetes-extra](#kubernetes-extra)
 - [Update the uv.lock templates](#update-the-uvlock-templates)
+
+## TL;DR: Update the profiles in a single shot
+
+> [!TIP]
+> Read this section if all you want to do is open a PR to Charmcraft and get on with your day!
+
+You'll need the Charmcraft source and [uv](https://docs.astral.sh/uv/).
+
+After editing .j2 files in the Charmcraft source, run the following commands at the root of the Charmcraft source:
+
+```text
+make setup
+uv run https://raw.githubusercontent.com/canonical/charmcraft-profile-tools/refs/heads/main/inplace.py
+```
+
+The Python script:
+
+1. Clones this repo into the Charmcraft source
+2. Initializes a Kubernetes charm and a machine charm
+3. Lints each charm and runs its unit tests
+4. Locks the dependencies of each charm and updates `uv.lock.j2`
+
+If everything went well, commit your changes and open your PR 😌
 
 ## Generate charms for testing
 
