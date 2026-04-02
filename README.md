@@ -12,12 +12,9 @@ In the Charmcraft source, profiles are stored as .j2 template files. For example
 
 ## TL;DR: Update the profiles in a single shot
 
-> [!TIP]
-> Read this section if all you want to do is open a PR to Charmcraft and get on with your day!
-
 You'll need the Charmcraft source and [uv](https://docs.astral.sh/uv/).
 
-After editing .j2 files in the Charmcraft source, run the following commands at the root of the Charmcraft source:
+After editing the Charmcraft .j2 files, run the following commands at the root of the Charmcraft source:
 
 ```text
 make setup
@@ -32,7 +29,7 @@ The Python script:
 3. Lints each charm and runs its unit tests
 4. Updates the `uv.lock.j2` files
 
-If everything went well, commit your changes and open your PR 😌
+If everything went well, commit your changes and open a PR to Charmcraft 😌
 
 ## Generate charms for testing
 
