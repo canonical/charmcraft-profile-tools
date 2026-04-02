@@ -19,8 +19,10 @@ if not OUR_CLONE.exists:
         ]
     )
 
-# Generate charms and update the uv.lock templates in the Charmcraft source.
+# Generate charms, check them, then update the uv.lock templates in the Charmcraft source.
 env = os.environ.copy()
 env["CHARMCRAFT_DIR"] = str(pathlib.Path.cwd())
-subprocess.call(["uvx", "--from", "rust-just", "just", "init"], cwd=OUR_CLONE, env=env)
+subprocess.call(
+    ["uvx", "--from", "rust-just", "just", "init", "lint,unit"], cwd=OUR_CLONE, env=env
+)
 subprocess.call(["uvx", "--from", "rust-just", "just", "lock"], cwd=OUR_CLONE, env=env)
