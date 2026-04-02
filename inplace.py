@@ -8,7 +8,7 @@ OUR_CLONE = pathlib.Path() / "charmcraft-profile-tools" / "canonical-match-profi
 
 # Make sure we have a clone of the charmcraft-profile-tools repo, with a new branch checked out
 # in case we want to push the generated charms. Using https://github.com/dwilding/gimmegit.
-if not OUR_CLONE.exists:
+if not OUR_CLONE.exists():
     subprocess.check_call(
         [
             "uvx",
