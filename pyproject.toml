@@ -1,0 +1,41 @@
+[project]
+name = "charmcraft-profile-tools"
+version = "0.1.0"
+description = "TODO"
+authors = [
+    { name = "The Charm Tech team at Canonical Ltd." },
+]
+requires-python = ">= 3.10"
+dependencies = []
+
+[project.scripts]
+kubernetes = "charmcraft_profile_tools:kubernetes"
+machine = "charmcraft_profile_tools:machine"
+
+[dependency-groups]
+dev = [
+    "ruff",
+    "ty>=0.0.28",
+]
+
+[build-system]
+requires = [
+    "uv_build>=0.11,<0.12",
+]
+build-backend = "uv_build"
+
+[tool.ruff]
+exclude = [
+    "kubernetes",
+    "kubernetes-extra",
+    "machine",
+]
+format.quote-style = "single"
+line-length = 99
+
+[tool.ty.src]
+exclude = [
+    "kubernetes",
+    "kubernetes-extra",
+    "machine",
+]

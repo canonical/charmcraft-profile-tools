@@ -81,3 +81,11 @@ _tox charm envs:
         echo "{{BOLD}}tox -e {{envs}}{{NORMAL}}"
         tox -e {{envs}}
     fi
+
+format:
+  uv run ruff format
+
+lint:
+  uv run ruff check
+  uv run ruff format --diff
+  uv run ty check
