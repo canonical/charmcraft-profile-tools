@@ -1,12 +1,29 @@
+import pathlib
+import shutil
 import subprocess
 
-import rewriter
+from ._rewriter import Rewriter
+
+KUBERNETES = pathlib.Path('kubernetes')
+KUBERNETES_EXTRA = pathlib.Path('kubernetes-extra')
 
 
-def main():
+def implement_kubernetes_extra() -> None:
+    """Implement a more complete version of the K8s charm."""
+
+    # Copy the K8s charm.
+    assert KUBERNETES.is_dir()
+    shutil.rmtree(KUBERNETES_EXTRA, ignore_errors=True)
+    shutil.copytree(KUBERNETES, KUBERNETES_EXTRA)
+
+    # Delete any files/dirs created when running the K8s charm's tests.
+    (KUBERNETES_EXTRA / '.coverage').unlink(missing_ok=True)
+    for dir in ['.ruff_cache', '.tox', '.venv']:
+        shutil.rmtree(KUBERNETES_EXTRA / dir, ignore_errors=True)
+
     # Change the container image to the demo server from the K8s charm tutorial:
     # https://documentation.ubuntu.com/ops/latest/tutorial/from-zero-to-hero-write-your-first-kubernetes-charm/study-your-application/
-    r = rewriter.Rewriter('charmcraft.yaml')
+    r = Rewriter(KUBERNETES_EXTRA / 'charmcraft.yaml')
     r.fwd(
         prefix='    upstream-source: some-repo/some-image:some-tag',
         change='    upstream-source: ghcr.io/canonical/api_demo_server:1.0.2',
@@ -14,7 +31,7 @@ def main():
     r.save()
 
     # Change the Pebble layer so that Pebble starts the server.
-    r = rewriter.Rewriter('src/charm.py')
+    r = Rewriter(KUBERNETES_EXTRA / 'src/charm.py')
     r.set_indent(4)
     r.fwd('def _on_pebble_ready')
     r.fwd('    layer')
@@ -28,9 +45,9 @@ def main():
 
     # Implement get_version() in the workload module, by requesting the version over HTTP.
     subprocess.check_call(
-        ['uv', 'add', '--quiet', 'requests==2.33.0']
+        ['uv', 'add', '--quiet', 'requests==2.33.0'], cwd=KUBERNETES_EXTRA
     )  # Add package to charm venv.
-    r = rewriter.Rewriter('src/my_application.py')
+    r = Rewriter(KUBERNETES_EXTRA / 'src/my_application.py')
     r.fwd('import logging')
     r.add('')
     r.add('import requests')
@@ -43,7 +60,7 @@ def main():
     r.save()
 
     # Enable the integration test that checks the workload version.
-    r = rewriter.Rewriter('tests/integration/test_charm.py')
+    r = Rewriter(KUBERNETES_EXTRA / 'tests/integration/test_charm.py')
     r.fwd('import pytest', remove_line=True)
     r.fwd(
         prefix='@pytest.mark.skip',
@@ -53,9 +70,7 @@ def main():
     r.add('    assert version == "1.0.2"')
     r.save()
 
-    # Format the charm code (just in case).
-    subprocess.check_call(['tox', '-e', 'format'])
-
-
-if __name__ == '__main__':
-    main()
+    # Format the charm code (just in case) then run the charm's tests.
+    subprocess.check_call(
+        ['uvx', '--with', 'tox-uv', 'tox', '-e', 'format,lint,unit'], cwd=KUBERNETES_EXTRA
+    )

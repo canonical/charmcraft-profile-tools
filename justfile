@@ -7,12 +7,6 @@ init tox="": (_charmcraft-init "kubernetes" "machine") (_tox "kubernetes" tox) (
 [doc("Initialize a K8s charm. CHARMCRAFT_DIR must be set")]
 kubernetes tox="": (_charmcraft-init "kubernetes") (_tox "kubernetes" tox)
 
-[doc("Implement a more complete version of the K8s charm")]
-[working-directory: "kubernetes-extra"]
-kubernetes-extra tox="": _init-kubernetes-extra && (_tox "kubernetes-extra" tox)
-    @echo "{{BOLD}}Implementing charm: kubernetes-extra{{NORMAL}}"
-    @uv run --project ../.implement ../.implement/kubernetes-extra.py
-
 [doc("Initialize a machine charm. CHARMCRAFT_DIR must be set")]
 machine tox="": (_charmcraft-init "machine") (_tox "machine" tox)
 
@@ -66,12 +60,6 @@ _charmcraft-init +profiles:
     done
     echo "{{BOLD}}Deactivating Charmcraft environment"
     deactivate
-
-_init-kubernetes-extra:
-    @test -d kubernetes
-    @rm -rf kubernetes-extra
-    @cp -r kubernetes kubernetes-extra
-    @cd kubernetes-extra && rm -rf .coverage .ruff_cache .tox .venv
 
 _tox charm envs:
     #!/bin/sh

@@ -9,8 +9,9 @@ requires-python = ">= 3.10"
 dependencies = []
 
 [project.scripts]
-kubernetes = "charmcraft_profile_tools:kubernetes"
-machine = "charmcraft_profile_tools:machine"
+kubernetes = "charmcraft_profile_tools._charmcraft:init_kubernetes"
+kubernetes-extra = "charmcraft_profile_tools._extra:implement_kubernetes_extra"
+machine = "charmcraft_profile_tools._charmcraft:init_machine"
 
 [dependency-groups]
 dev = [
