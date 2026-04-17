@@ -1,11 +1,11 @@
 [project]
 name = "charmcraft-profile-tools"
-version = "0.1.0"
+version = "0.0.0"  # Not significant. These tools should always be run from source.
 description = "TODO"
 authors = [
     { name = "The Charm Tech team at Canonical Ltd." },
 ]
-requires-python = ">= 3.10"
+requires-python = ">= 3.11"  # Because we want tomllib.
 dependencies = []
 
 [project.scripts]
