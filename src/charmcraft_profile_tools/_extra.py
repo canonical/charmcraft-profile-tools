@@ -89,7 +89,7 @@ def add_functionality(extra: pathlib.Path, step_failure: str) -> None:
 
     # Implement get_version() in the workload module, by requesting the version over HTTP.
     try:
-        subprocess.check_call(['uv', 'add', *UV_ARGS, 'requests==2.33.0'], cwd=extra)
+        subprocess.check_call(['uv', 'add', *UV_ARGS, 'requests==2.33.1'], cwd=extra)
     except subprocess.CalledProcessError:
         raise SystemExit(step_failure)
     r = _rewriter.Rewriter(extra / 'src/my_application.py')
