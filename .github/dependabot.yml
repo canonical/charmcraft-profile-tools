@@ -1,0 +1,44 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "uv"
+    directory: "/kubernetes"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "uv"
+    directory: "/kubernetes-extra"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+    cooldown:
+      default-days: 7
+    ignore:
+      - dependency-name: "ops"
+      - dependency-name: "ruff"
+      - dependency-name: "codespell"
+      - dependency-name: "pyright"
+      - dependency-name: "coverage"
+      - dependency-name: "pytest"
+      - dependency-name: "pytest-jubilant"
+      - dependency-name: "jubilant"
+      - dependency-name: "PyYAML"
+  - package-ecosystem: "uv"
+    directory: "/machine"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+    cooldown:
+      default-days: 7
