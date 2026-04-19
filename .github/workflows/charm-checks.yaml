@@ -25,10 +25,9 @@ jobs:
         run: |
           cd kubernetes
           tox -e lint,unit
-      - name: Implement kubernetes-extra
+      - name: Implement and check kubernetes-extra
         run: |
-          # Implement the charm and check it.
-          uv run kubernetes-extra
+          uv run kubernetes-extra  # Includes linting and unit tests.
           # Check that the implemented charm matches the one stored in the repo.
           # We don't care about differences in versions of transitive deps.
           git add --all
