@@ -52,9 +52,9 @@ def init_charm(profile: str) -> None:
 
     step = "Lock the charm's dependencies"
     _steps.print_step(step, 2, 5)
-    uv_lock_opts = sys.argv[1:]
+    uv_lock_args = sys.argv[1:]
     try:
-        subprocess.check_call(['uv', 'lock', *UV_ARGS, *uv_lock_opts], cwd=charm_dir)
+        subprocess.check_call(['uv', 'lock', *UV_ARGS, *uv_lock_args], cwd=charm_dir)
     except subprocess.CalledProcessError:
         raise SystemExit(_steps.failed(step, report))
     report = _steps.passed(step, report)
