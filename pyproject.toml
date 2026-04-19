@@ -1,7 +1,7 @@
 [project]
 name = "charmcraft-profile-tools"
 version = "0.0.0"  # Not significant. These tools should always be run from source.
-description = "TODO"
+description = "Tools for maintaining the 'kubernetes' and 'machine' profiles of Charmcraft."
 authors = [
     { name = "The Charm Tech team at Canonical Ltd." },
 ]
