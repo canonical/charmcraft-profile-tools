@@ -7,9 +7,9 @@ COLOR = os.isatty(sys.stdout.fileno()) and not bool(os.getenv('NO_COLOR'))
 def print_step(step: str, num: int, of: int) -> None:
     full_step = f'\nStep {num}/{of} - {step}'
     if COLOR:
-        print(f'\033[1m{full_step}\033[0m')
+        print(f'\033[1m{full_step}\033[0m', flush=True)
     else:
-        print(full_step)
+        print(full_step, flush=True)
 
 
 def passed(step: str, report: str = '') -> str:
