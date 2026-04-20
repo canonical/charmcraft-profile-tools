@@ -4,11 +4,11 @@ on:
   schedule:
     - cron: "50 22 * * 0"
   pull_request:
-    paths:
-      - kubernetes/**
-      - machine/**
     types:
-      - ready_for_review
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review  # Triggers on the transition. GitHub doesn't do this by default.
   push:
     branches:
       - main
@@ -19,6 +19,9 @@ permissions: {}
 
 jobs:
   current:
+    # We typically leave a PR in draft status until the corresponding Charmcraft PR has merged.
+    # So we only want to check against Charmcraft on non-draft PRs.
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout this repo
