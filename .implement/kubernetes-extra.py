@@ -9,7 +9,7 @@ def main():
     r = rewriter.Rewriter('charmcraft.yaml')
     r.fwd(
         prefix='    upstream-source: some-repo/some-image:some-tag',
-        change='    upstream-source: ghcr.io/canonical/api_demo_server:1.0.2',
+        change='    upstream-source: ghcr.io/canonical/api_demo_server:1.0.3',
     )
     r.save()
 
@@ -50,7 +50,7 @@ def main():
         change='# @pytest.mark.skip',
     )
     r.fwd('    assert version', remove_line=True)
-    r.add('    assert version == "1.0.2"')
+    r.add('    assert version == "1.0.3"')
     r.save()
 
     # Format the charm code (just in case).
