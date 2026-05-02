@@ -53,9 +53,6 @@ def main():
     r.add('    assert version == "1.0.3"')
     r.save()
 
-    # Format the charm code (just in case).
-    subprocess.check_call(['tox', '-e', 'format'])
-
 
 if __name__ == '__main__':
     main()
