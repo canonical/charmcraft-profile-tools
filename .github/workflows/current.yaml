@@ -27,7 +27,7 @@ jobs:
       - name: Checkout this repo
         uses: actions/checkout@v6
         with:
-          path: initial-charms
+          path: charmcraft-profile-tools
           persist-credentials: false
       - name: Checkout Charmcraft
         uses: actions/checkout@v6
@@ -44,7 +44,8 @@ jobs:
           make setup
       - name: Generate charms
         run: |
-          cd initial-charms
-          CHARMCRAFT_DIR=../charmcraft uvx --from rust-just just init
+          cd charmcraft-profile-tools
+          CHARMCRAFT_DIR=../charmcraft uvx --from rust-just just kubernetes
+          CHARMCRAFT_DIR=../charmcraft uvx --from rust-just just machine
           git add --all
           git diff --exit-code HEAD
