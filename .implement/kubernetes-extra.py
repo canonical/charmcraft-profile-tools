@@ -28,7 +28,7 @@ def main():
 
     # Implement get_version() in the workload module, by requesting the version over HTTP.
     subprocess.check_call(
-        ['uv', 'add', '--quiet', 'requests==2.33.0']
+        ['uv', 'add', '--python', '3.10', '--quiet', 'requests==2.33.0']
     )  # Add package to charm venv.
     r = rewriter.Rewriter('src/my_application.py')
     r.fwd('import logging')
