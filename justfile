@@ -3,7 +3,7 @@ default:
   @just --list
 
 [doc("Initialize a Kubernetes charm. CHARMCRAFT_DIR must be set")]
-kubernetes:
+kubernetes *uv_lock_args:
   @.scripts/check_charmcraft_root.sh
   @rm -rf kubernetes
   uv run --directory $CHARMCRAFT_DIR --python 3.10 --no-dev \
@@ -12,14 +12,14 @@ kubernetes:
     --profile kubernetes \
     --name my-application \
     --author Charmer
-  uv lock --directory kubernetes --python 3.10
+  uv lock --directory kubernetes --python 3.10 {{uv_lock_args}}
   cp "{{justfile_directory()}}/kubernetes/uv.lock" "$CHARMCRAFT_DIR/charmcraft/templates/init-kubernetes/uv.lock.j2"
   sed -i 's/my-application/{{{{ name }}/g' "$CHARMCRAFT_DIR/charmcraft/templates/init-kubernetes/uv.lock.j2"
   uvx --directory kubernetes --python 3.10 \
     --with tox-uv tox -e lint,unit
 
 [doc("Initialize a machine charm. CHARMCRAFT_DIR must be set")]
-machine:
+machine *uv_lock_args:
   @.scripts/check_charmcraft_root.sh
   rm -rf machine
   uv run --directory $CHARMCRAFT_DIR --python 3.10 --no-dev \
@@ -28,7 +28,7 @@ machine:
     --profile machine \
     --name my-application \
     --author Charmer
-  uv lock --directory machine --python 3.10
+  uv lock --directory machine --python 3.10 {{uv_lock_args}}
   cp "{{justfile_directory()}}/machine/uv.lock" "$CHARMCRAFT_DIR/charmcraft/templates/init-machine/uv.lock.j2"
   sed -i 's/my-application/{{{{ name }}/g' "$CHARMCRAFT_DIR/charmcraft/templates/init-machine/uv.lock.j2"
   uvx --directory machine --python 3.10 \
