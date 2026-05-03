@@ -22,8 +22,8 @@ jobs:
       - name: Install tox and tox-uv
         run: uv tool install tox --with tox-uv
       - name: Check kubernetes
+        working-directory: kubernetes
         run: |
-          cd kubernetes
           tox -e lint,unit
       - name: Implement and check kubernetes-extra
         run: |
@@ -34,6 +34,6 @@ jobs:
           git add --all
           git diff --exit-code HEAD -- . ':(exclude)kubernetes-extra/uv.lock'
       - name: Check machine
+        working-directory: machine
         run: |
-          cd machine
           tox -e lint,unit
