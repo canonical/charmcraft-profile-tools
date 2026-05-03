@@ -19,8 +19,11 @@ jobs:
           persist-credentials: false
       - name: Install uv
         uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57  # v8.0.0
-      - name: Lint
+      - name: Check uv.lock
+        working-directory: .implement
         run: |
-          cd .implement
+          uv lock --check
+      - name: Lint the code
+        working-directory: .implement
+        run: |
           uvx --from rust-just just lint
-          git diff --exit-code  # In case 'uv run' changed the lockfile.

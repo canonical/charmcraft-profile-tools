@@ -1,83 +1,47 @@
-_default:
-    @just --list --unsorted
+[private]
+default:
+  @just --list
 
-[doc("Initialize a K8s charm and a machine charm. CHARMCRAFT_DIR must be set")]
-init tox="": (_charmcraft-init "kubernetes" "machine") (_tox "kubernetes" tox) (_tox "machine" tox)
-
-[doc("Initialize a K8s charm. CHARMCRAFT_DIR must be set")]
-kubernetes tox="": (_charmcraft-init "kubernetes") (_tox "kubernetes" tox)
-
-[doc("Implement a more complete version of the K8s charm")]
-[working-directory: "kubernetes-extra"]
-kubernetes-extra tox="": _init-kubernetes-extra && (_tox "kubernetes-extra" tox)
-    @echo "{{BOLD}}Implementing charm: kubernetes-extra{{NORMAL}}"
-    @uv run --project ../.implement ../.implement/kubernetes-extra.py
+[doc("Initialize a Kubernetes charm. CHARMCRAFT_DIR must be set")]
+kubernetes *uv_lock_args:
+  @.scripts/check_charmcraft_root.sh
+  @rm -rf kubernetes
+  uv run --directory $CHARMCRAFT_DIR --python 3.10 --no-dev \
+    charmcraft init \
+    --project-dir "{{justfile_directory()}}/kubernetes" \
+    --profile kubernetes \
+    --name my-application \
+    --author Charmer
+  uv lock --directory kubernetes --python 3.10 {{uv_lock_args}}
+  cp "{{justfile_directory()}}/kubernetes/uv.lock" "$CHARMCRAFT_DIR/charmcraft/templates/init-kubernetes/uv.lock.j2"
+  sed -i 's/my-application/{{{{ name }}/g' "$CHARMCRAFT_DIR/charmcraft/templates/init-kubernetes/uv.lock.j2"
+  uvx --directory kubernetes --python 3.10 \
+    --with tox-uv tox -e lint,unit
 
 [doc("Initialize a machine charm. CHARMCRAFT_DIR must be set")]
-machine tox="": (_charmcraft-init "machine") (_tox "machine" tox)
+machine *uv_lock_args:
+  @.scripts/check_charmcraft_root.sh
+  @rm -rf machine
+  uv run --directory $CHARMCRAFT_DIR --python 3.10 --no-dev \
+    charmcraft init \
+    --project-dir "{{justfile_directory()}}/machine" \
+    --profile machine \
+    --name my-application \
+    --author Charmer
+  uv lock --directory machine --python 3.10 {{uv_lock_args}}
+  cp "{{justfile_directory()}}/machine/uv.lock" "$CHARMCRAFT_DIR/charmcraft/templates/init-machine/uv.lock.j2"
+  sed -i 's/my-application/{{{{ name }}/g' "$CHARMCRAFT_DIR/charmcraft/templates/init-machine/uv.lock.j2"
+  uvx --directory machine --python 3.10 \
+    --with tox-uv tox -e lint,unit
 
-[doc("Generate uv.lock templates for the K8s and machine charms")]
-lock: lock-kubernetes lock-machine
-
-[doc("Generate a uv.lock template for the K8s charm")]
-[working-directory: "kubernetes"]
-lock-kubernetes:
-    #!/bin/sh
-    echo "{{BOLD}}Generating .templates/init-kubernetes/uv.lock.j2{{NORMAL}}"
-    uv lock
-    mkdir -p "../.templates/init-kubernetes"
-    sed 's/my-application/{{{{ name }}/g' uv.lock > "../.templates/init-kubernetes/uv.lock.j2"
-    if [ -n "$CHARMCRAFT_DIR" ]; then
-        echo "{{BOLD}}Copying .templates/init-kubernetes/uv.lock.j2{{NORMAL}} to the Charmcraft source"
-        cp "../.templates/init-kubernetes/uv.lock.j2" "$CHARMCRAFT_DIR/charmcraft/templates/init-kubernetes"
-    fi
-
-[doc("Generate a uv.lock template for the machine charm")]
-[working-directory: "machine"]
-lock-machine:
-    #!/bin/sh
-    echo "{{BOLD}}Generating .templates/init-machine/uv.lock.j2{{NORMAL}}"
-    uv lock
-    mkdir -p "../.templates/init-machine"
-    sed 's/my-application/{{{{ name }}/g' uv.lock > "../.templates/init-machine/uv.lock.j2"
-    if [ -n "$CHARMCRAFT_DIR" ]; then
-        echo "{{BOLD}}Copying .templates/init-machine/uv.lock.j2{{NORMAL}} to the Charmcraft source"
-        cp "../.templates/init-machine/uv.lock.j2" "$CHARMCRAFT_DIR/charmcraft/templates/init-machine"
-    fi
-
-_charmcraft-init +profiles:
-    #!/bin/sh
-    if [ -z "$CHARMCRAFT_DIR" ]; then
-        echo "CHARMCRAFT_DIR is not set"
-        exit 1
-    fi
-    if [ ! -d "$CHARMCRAFT_DIR/.venv" ]; then
-        echo "Environment does not exist: $CHARMCRAFT_DIR/.venv"
-        echo "Have you run 'make setup' in the Charmcraft source?"
-        exit 1
-    fi
-    echo "{{BOLD}}Activating environment: $CHARMCRAFT_DIR/.venv"
-    . "$CHARMCRAFT_DIR/.venv/bin/activate"
-    for profile in {{profiles}}; do
-        echo "{{BOLD}}Generating charm: $profile{{NORMAL}}"
-        rm -rf $profile
-        echo "{{BOLD}}CHARMCRAFT_DEVELOPER=1 charmcraft init --profile $profile --project-dir $profile --name my-application --author Charmer{{NORMAL}}"
-        CHARMCRAFT_DEVELOPER=1 charmcraft init --profile $profile --project-dir $profile --name my-application --author Charmer
-    done
-    echo "{{BOLD}}Deactivating Charmcraft environment"
-    deactivate
-
-_init-kubernetes-extra:
-    @test -d kubernetes
-    @rm -rf kubernetes-extra
-    @cp -r kubernetes kubernetes-extra
-    @cd kubernetes-extra && rm -rf .coverage .ruff_cache .tox .venv
-
-_tox charm envs:
-    #!/bin/sh
-    if [ -n "{{envs}}" ]; then
-        echo "{{BOLD}}Checking charm: {{charm}}{{NORMAL}}"
-        cd "{{charm}}"
-        echo "{{BOLD}}tox -e {{envs}}{{NORMAL}}"
-        tox -e {{envs}}
-    fi
+[doc("Implement a more complete version of the Kubernetes charm")]
+kubernetes-extra:
+  @test -d kubernetes
+  @rm -rf kubernetes-extra
+  @cp -r kubernetes kubernetes-extra
+  @cd kubernetes-extra && rm -rf .coverage .ruff_cache .tox .venv
+  uv run --directory {{justfile_directory()}}/kubernetes-extra \
+    --project {{justfile_directory()}}/.implement \
+    {{justfile_directory()}}/.implement/kubernetes-extra.py
+  uvx --directory {{justfile_directory()}}/kubernetes-extra --python 3.10 \
+    --with tox-uv tox -e format,lint,unit

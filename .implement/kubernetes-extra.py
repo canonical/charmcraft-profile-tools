@@ -28,7 +28,7 @@ def main():
 
     # Implement get_version() in the workload module, by requesting the version over HTTP.
     subprocess.check_call(
-        ['uv', 'add', '--quiet', 'requests==2.33.0']
+        ['uv', 'add', '--python', '3.10', '--quiet', 'requests>=2.33.1,<3']
     )  # Add package to charm venv.
     r = rewriter.Rewriter('src/my_application.py')
     r.fwd('import logging')
@@ -52,9 +52,6 @@ def main():
     r.fwd('    assert version', remove_line=True)
     r.add('    assert version == "1.0.3"')
     r.save()
-
-    # Format the charm code (just in case).
-    subprocess.check_call(['tox', '-e', 'format'])
 
 
 if __name__ == '__main__':
