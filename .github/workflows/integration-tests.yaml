@@ -32,16 +32,16 @@ jobs:
       - name: Prepare for deploying K8s charms
         run: sudo concierge prepare -p microk8s
       - name: Pack charm
+        working-directory: kubernetes-extra
         run: |
-          cd kubernetes-extra
           charmcraft pack
       - name: Run integration tests
+        working-directory: kubernetes-extra
         run: |
-          cd kubernetes-extra
           tox -e integration
       - name: Check handling of .charm files
+        working-directory: kubernetes-extra
         run: |
-          cd kubernetes-extra
           cp *.charm foo.charm
           CHARM_PATH=foo.charm tox -e integration
           ! CHARM_PATH=bar.charm tox -e integration  # Fails because bar.charm doesn't exist.
@@ -67,16 +67,16 @@ jobs:
       - name: Prepare for deploying machine charms
         run: sudo concierge prepare -p machine
       - name: Pack charm
+        working-directory: machine
         run: |
-          cd machine
           charmcraft pack
       - name: Run integration tests
+        working-directory: machine
         run: |
-          cd machine
           tox -e integration
       - name: Check handling of .charm files
+        working-directory: machine
         run: |
-          cd machine
           cp *.charm foo.charm
           CHARM_PATH=foo.charm tox -e integration
           ! CHARM_PATH=bar.charm tox -e integration  # Fails because bar.charm doesn't exist.
