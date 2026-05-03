@@ -21,7 +21,7 @@ kubernetes *uv_lock_args:
 [doc("Initialize a machine charm. CHARMCRAFT_DIR must be set")]
 machine *uv_lock_args:
   @.scripts/check_charmcraft_root.sh
-  rm -rf machine
+  @rm -rf machine
   uv run --directory $CHARMCRAFT_DIR --python 3.10 --no-dev \
     charmcraft init \
     --project-dir "{{justfile_directory()}}/machine" \
