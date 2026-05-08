@@ -8,6 +8,7 @@ import logging
 import pathlib
 
 import jubilant
+import pytest
 import yaml
 
 logger = logging.getLogger(__name__)
@@ -15,12 +16,13 @@ logger = logging.getLogger(__name__)
 METADATA = yaml.safe_load(pathlib.Path("charmcraft.yaml").read_text())
 
 
+@pytest.mark.juju_setup  # See https://github.com/canonical/pytest-jubilant/#juju_setup
 def test_deploy(charm: pathlib.Path, juju: jubilant.Juju):
     """Deploy the charm under test."""
     resources = {
         "some-container-image": METADATA["resources"]["some-container-image"]["upstream-source"]
     }
-    juju.deploy(charm.resolve(), app="my-application", resources=resources)
+    juju.deploy(charm, app="my-application", resources=resources)
     juju.wait(jubilant.all_active)
 
 

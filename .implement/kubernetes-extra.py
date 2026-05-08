@@ -44,7 +44,6 @@ def main():
 
     # Enable the integration test that checks the workload version.
     r = rewriter.Rewriter('tests/integration/test_charm.py')
-    r.fwd('import pytest', remove_line=True)
     r.fwd(
         prefix='@pytest.mark.skip',
         change='# @pytest.mark.skip',
