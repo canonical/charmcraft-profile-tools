@@ -13,6 +13,7 @@ import pytest
 logger = logging.getLogger(__name__)
 
 
+@pytest.mark.juju_setup  # See https://github.com/canonical/pytest-jubilant/#juju_setup
 def test_deploy(charm: pathlib.Path, juju: jubilant.Juju):
     """Deploy the charm under test."""
     juju.deploy(charm.resolve(), app="my-application")
