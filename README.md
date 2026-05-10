@@ -1,82 +1,103 @@
-This repo contains tools for maintaining the `kubernetes` and `machine` profiles of [Charmcraft](https://github.com/canonical/charmcraft). The tools are primarily intended to be used by the Charm Tech team at Canonical.
+This repo contains:
 
-In the Charmcraft source, profiles are stored as .j2 template files. For example, [charm.py.j2](https://github.com/canonical/charmcraft/blob/main/charmcraft/templates/init-kubernetes/src/charm.py.j2). This enables `charmcraft init` to fill in the charm name and other details, but testing the profiles can be awkward.
+- The latest [Kubernetes](kubernetes) and [machine](machine) charms that `charmcraft init` generates, using Charmcraft from `main`.
+- Tools for maintaining the corresponding templates in the Charmcraft source. The tools are primarily intended to be used by the Charm Tech team at Canonical.
 
 **In this README**
 
-- [Generate charms for testing](#generate-charms-for-testing)
-    - [Integration tests](#integration-tests)
-    - [kubernetes-extra](#kubernetes-extra)
-- [Update the uv.lock templates](#update-the-uvlock-templates)
+- [Update the templates in the Charmcraft source](#update-the-templates-in-the-charmcraft-source)
+- [Generate charms from Charmcraft and run tests](#generate-charms-from-charmcraft-and-run-tests)
+- [Bump dependencies in the uv.lock templates](#bump-dependencies-in-the-uvlock-templates)
+- [Generate a Kubernetes charm that passes integration tests](#generate-a-kubernetes-charm-that-passes-integration-tests)
+- [Open a PR to run integration tests and sync this repo](#open-a-pr-to-run-integration-tests-and-sync-this-repo)
+- [Open a Charmcraft PR](#open-a-charmcraft-pr)
+- [Finish syncing this repo](#finish-syncing-this-repo)
+- [Update the Ops docs and example charms](#update-the-ops-docs-and-example-charms)
 
-## Generate charms for testing
+## Update the templates in the Charmcraft source
 
-You'll need:
+Before you begin, make sure that you've forked the [Charmcraft repo](https://github.com/canonical/charmcraft) and cloned your fork.
 
-- The Charmcraft source. We'll assume this is located at `~/charmcraft`.
-- A virtual environment in the Charmcraft source. To create one, run `make setup` in the Charmcraft source.
-- [just](https://just.systems/man/en/), [uv](https://docs.astral.sh/uv/), and [tox](https://tox.wiki/en/). To install tox, run `uv tool install tox --with tox-uv`.
+In your Charmcraft clone, check out a new branch, then edit the .j2 template files with your changes to the `kubernetes` and `machine` profiles. The .j2 files are located in these directories:
 
-After editing .j2 files in the Charmcraft source, run the following command in this repo:
+- `charmcraft/templates/init-kubernetes`
+- `charmcraft/templates/init-machine`
 
-```text
-CHARMCRAFT_DIR=~/charmcraft just init
-```
-
-This initializes a Kubernetes charm in the `kubernetes` directory and a machine charm in the `machine` directory. If you only want one of the charms, use `just kubernetes` or `just machine` instead of `just init`.
-
-You can test the charms as normal using tox. Alternatively, initialize the charms and immediately test them:
-
-```text
-CHARMCRAFT_DIR=~/charmcraft just init lint,unit
-```
-
-The list of environments after `just init` is passed to `tox -e <environments>` for each charm. This also works with `just kubernetes` and `just machine`.
-
-### Integration tests
-
-Integration tests require a Juju controller. You can use [Concierge](https://github.com/canonical/concierge) to bootstrap a Juju controller.
+Don't commit changes yet. Wait until you've tested the charms that `charmcraft init` generates from the .j2 files.
 
 > [!IMPORTANT]
-> Don't run integration tests using `just ... integration`. Instead, in each directory, run `charmcraft pack` followed by `tox -e integration`.
+> Don't edit the `uv.lock.j2` files. The tools in this repo run `uv lock` in the generated charms and update the `uv.lock.j2` files accordingly. When you run the tools, you can pass `uv lock` options if needed.
 
-The machine charm's integration tests should pass. The charm goes active without installing a workload.
+## Generate charms from Charmcraft and run tests
 
-The Kubernetes charm's integration tests should fail because Juju tries to deploy the charm alongside a placeholder container image.
+The tools in this repo need to be run from source. Before you begin, make sure that you've forked this repo and cloned your fork.
 
-### kubernetes-extra
+1. Run `export CHARMCRAFT_DIR="$PWD"` at the root of your Charmcraft clone.
+2. Change to your charmcraft-profile-tools clone, then check out a new branch.
+3. Run `just kubernetes` and `just machine`.
 
-To generate a Kubernetes charm that passes integration tests, make sure you've initialized a Kubernetes charm (as above), then run:
+If `just` is not available on your system, use `uvx --from rust-just just` instead.
 
-```text
-just kubernetes-extra
-```
+Each `just` command generates a charm using `charmcraft init`, locks the charm's dependencies, then runs `tox -e lint,unit` in the charm. If the tests fail, fix the .j2 template files and run the `just` command again.
 
-This copies `kubernetes` to a directory called `kubernetes-extra`, then replaces the placeholder parts of the charm by real configuration/code. For details, see [.implement/kubernetes-extra.py](.implement/kubernetes-extra.py).
+### TL;DR
 
-To generate the charm and immediately test it:
-
-```text
-just kubernetes-extra lint,unit
-```
-
-To run the charm's integration tests:
+I use [gimmegit](https://github.com/dwilding/gimmegit) to help me quickly run the tools:
 
 ```text
-cd kubernetes-extra
-charmcraft pack
-tox -e integration
+export CHARMCRAFT_DIR="$PWD"
+gimmegit --allow-nested -u canonical dwilding/charmcraft-profile-tools update-charms
+cd charmcraft-profile-tools/dwilding-update-charms
+just kubernetes
+just machine
 ```
 
-## Update the uv.lock templates
+The `gimmegit` command puts a dedicated charmcraft-profile-tools clone inside my Charmcraft clone.
 
-If you change the dependencies of the Charmcraft profiles, you'll need to update `uv.lock.j2` for each profile.
+## Bump dependencies in the lockfile templates
 
-Make sure you've initialized a Kubernetes charm and a machine charm (see [Generate charms for testing](#generate-charms-for-testing)). Then run `just lock`. This locks the dependencies of each charm and generates template files:
+`just kubernetes` and `just machine` run `uv lock` in the generated charms and update the `uv.lock.j2` files accordingly. This picks up any dependency changes you made in the `pyproject.toml.j2` files.
 
-- `.templates/init-kubernetes/uv.lock.j2`
-- `.templates/init-machine/uv.lock.j2`
+To bump a dependency that's only constrained in the lockfile, pass `uv lock` options through the `just commands`. For example:
 
-You can copy these files to the Charmcraft source. Alternatively, run `CHARMCRAFT_DIR=~/charmcraft just lock` to generate the `uv.lock.j2` files and copy them to the Charmcraft source.
+```text
+just kubernetes --upgrade-package pytest
+just machine --upgrade-package pytest
+```
 
-If you only want one of the files, use `just lock-kubernetes` or `just lock-machine` instead of `just lock`.
+## Generate a Kubernetes charm that passes integration tests
+
+The charm generated by `charmcraft init --profile kubernetes` doesn't pass integration tests (because Juju tries to deploy the charm alongside a placeholder container image).
+
+To generate a charm that should pass integration tests, run `just kubernetes-extra` in your charmcraft-profile-tools clone. This command creates a [copy of the Kubernetes charm](kubernetes-extra) and replaces the placeholders by real configuration/code.
+
+`just kubernetes-extra` runs `tox -e lint,unit` after generating the charm. If the tests fail, edit [.implement/kubernetes-extra.py](.implement/kubernetes-extra.py) to change how the placeholders are replaced. Ask @dwilding for help if you're stuck.
+
+## Open a PR to run integration tests and sync this repo
+
+Integration tests require packed charms and a Juju controller. Instead of running integration tests locally, have GitHub run the integration tests:
+
+1. Commit changes in your charmcraft-profile-tools clone.
+2. Push your branch and open a PR.
+3. Leave your PR in draft status. This indicates that your branch is ahead of the charms that can be generated using Charmcraft from `main`.
+
+For example, see [charmcraft-profile-tools#53](ttps://github.com/canonical/charmcraft-profile-tools/pull/53).
+
+## Open a Charmcraft PR
+
+1. After your charmcraft-profile-tools PR has passed all automated checks, commit changes in your Charmcraft clone.
+2. Use a conventional commit type **for each commit**. For example, `feat(templates):` or `chore(templates):`.
+3. Push your branch and open a Charmcraft PR.
+4. Mention your Charmcraft PR in the description of your charmcraft-profile-tools PR.
+5. Ask someone else from Charm Tech to approve both PRs.
+
+## Finish syncing this repo
+
+After your Charmcraft PR has been merged, promote your charmcraft-profile-tools PR out of draft status, then merge it.
+
+## Update the Ops docs and example charms
+
+1. Go to the [main branch of the Charmcraft repo](https://github.com/canonical/charmcraft/tree/main) and grab the hash of the latest commit that updates the profiles (which is probably the commit coming from your merged PR).
+2. In your Ops clone, check out a new branch, then search for `uvx git+https://github.com/canonical/charmcraft@`. Update all instances to use the latest commit hash.
+3. Make sure that the Ops tutorials and example charms are consistent with your changes to the Charmcraft profiles.
+4. Open an Ops PR in the normal way.
