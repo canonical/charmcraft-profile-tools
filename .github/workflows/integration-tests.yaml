@@ -36,16 +36,19 @@ jobs:
       - name: Run integration tests
         working-directory: kubernetes-extra
         run: |
-          tox -e integration
+          uvx --python 3.10 --with tox-uv tox -e integration
       - name: Check handling of .charm files
         working-directory: kubernetes-extra
         run: |
           cp *.charm foo.charm
-          CHARM_PATH=foo.charm tox -e integration
-          ! CHARM_PATH=bar.charm tox -e integration  # Fails because bar.charm doesn't exist.
-          ! tox -e integration  # Fails because there's more than one .charm file.
+          CHARM_PATH=foo.charm uvx --python 3.10 --with tox-uv tox -e integration
+          # Expect failure if we specify a .charm file that doesn't exist.
+          ! CHARM_PATH=bar.charm uvx --python 3.10 --with tox-uv tox -e Integration
+          # Expect failure if there's more than one .charm file.
+          ! uvx --python 3.10 --with tox-uv tox -e integration
+          # Expect failure if there are no .charm files.
           rm *.charm
-          ! tox -e integration  # Fails because there are no .charm files.
+          ! uvx --python 3.10 --with tox-uv tox -e integration
 
   integration-machine:
     runs-on: ubuntu-latest
