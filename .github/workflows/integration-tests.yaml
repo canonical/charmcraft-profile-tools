@@ -25,8 +25,6 @@ jobs:
           persist-credentials: false
       - name: Install uv
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b  # v8.1.0
-      - name: Install tox and tox-uv
-        run: uv tool install tox --with tox-uv
       - name: Install Concierge
         run: sudo snap install --classic concierge
       - name: Prepare for deploying K8s charms
@@ -60,8 +58,6 @@ jobs:
           persist-credentials: false
       - name: Install uv
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b  # v8.1.0
-      - name: Install tox and tox-uv
-        run: uv tool install tox --with tox-uv
       - name: Install Concierge
         run: sudo snap install --classic concierge
       - name: Prepare for deploying machine charms
@@ -73,13 +69,13 @@ jobs:
       - name: Run integration tests
         working-directory: machine
         run: |
-          tox -e integration
+          uvx --python 3.10 --with tox-uv tox -e integration
       - name: Check handling of .charm files
         working-directory: machine
         run: |
           cp *.charm foo.charm
           CHARM_PATH=foo.charm tox -e integration
           ! CHARM_PATH=bar.charm tox -e integration  # Fails because bar.charm doesn't exist.
-          ! tox -e integration  # Fails because there's more than one .charm file.
+          ! uvx --python 3.10 --with tox-uv tox -e integration  # Fails because there's more than one .charm file.
           rm *.charm
-          ! tox -e integration  # Fails because there are no .charm files.
+          ! uvx --python 3.10 --with tox-uv tox -e integration  # Fails because there are no .charm files.

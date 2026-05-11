@@ -19,12 +19,10 @@ jobs:
           persist-credentials: false
       - name: Install uv
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b  # v8.1.0
-      - name: Install tox and tox-uv
-        run: uv tool install tox --with tox-uv
       - name: Check kubernetes
         working-directory: kubernetes
         run: |
-          tox -e lint,unit
+          uvx --python 3.10 --with tox-uv tox -e lint,unit
       - name: Implement and check kubernetes-extra
         run: |
           uvx --from rust-just just kubernetes-extra
@@ -36,4 +34,4 @@ jobs:
       - name: Check machine
         working-directory: machine
         run: |
-          tox -e lint,unit
+          uvx --python 3.10 --with tox-uv tox -e lint,unit
