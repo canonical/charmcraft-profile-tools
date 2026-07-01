@@ -25,12 +25,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout this repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           path: initial-charms
           persist-credentials: false
       - name: Checkout Charmcraft
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: canonical/charmcraft
           path: charmcraft

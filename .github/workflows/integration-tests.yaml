@@ -20,7 +20,7 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}-kubernetes-extra
       cancel-in-progress: true
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Install uv
@@ -55,7 +55,7 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}-machine
       cancel-in-progress: true
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Install uv
