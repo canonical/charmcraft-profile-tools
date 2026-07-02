@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> This repository is no longer used. For guidance about updating Charmcraft profiles, see [HACKING.md in the Ops repository](https://github.com/canonical/operator/blob/main/HACKING.md#updating-the-charmcraft-profiles).
+
 This repo contains tools for maintaining the `kubernetes` and `machine` profiles of [Charmcraft](https://github.com/canonical/charmcraft). The tools are primarily intended to be used by the Charm Tech team at Canonical.
 
 In the Charmcraft source, profiles are stored as .j2 template files. For example, [charm.py.j2](https://github.com/canonical/charmcraft/blob/main/charmcraft/templates/init-kubernetes/src/charm.py.j2). This enables `charmcraft init` to fill in the charm name and other details, but testing the profiles can be awkward.
